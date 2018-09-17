@@ -1,5 +1,5 @@
 const mongoose = require('mongoose'),
-    Joi = require('Joi'),
+    Joi = require('joi'),
     _ = require('lodash'),
     jwt = require('jsonwebtoken'),
     config = require('config')
