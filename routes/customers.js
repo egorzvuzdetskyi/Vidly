@@ -3,7 +3,8 @@ const express = require('express'),
     {
         Customer,
         validate
-    } = require('../models/customers');
+    } = require('../models/customers'),
+    asyncMiddleware = require('../middleware/async');
 
 const createDummyCustomer = async () => {
     const customer = new Customer({
@@ -17,108 +18,59 @@ const createDummyCustomer = async () => {
     console.log(result)
 };
 
-router.get('/', async (req, res) => {
-    try {
+router.get('/', asyncMiddleware(async (req, res) => {
 
-        const result = await Customer.find({});
+    const result = await Customer.find({});
 
-        res.send(result)
+    res.send(result)
+}));
 
-    } catch (e) {
+router.get('/:id', asyncMiddleware(async (req, res) => {
+    const result = await Customer.findById(req.params.id);
 
-        res.status(404).send(`Something went wrong`);
+    res.send(result)
+}));
 
-        console.log(e.message)
+router.post('/', asyncMiddleware(async (req, res) => {
+    const customer = new Customer({
+        name: req.body.name,
+        isGold: req.body.isGold ? req.body.isGold : false,
+        phone: req.body.phone
+    });
 
+    const {
+        error
+    } = validate(customer);
+
+    if (error) {
+        res.status(400).send(error.details[0].message);
+        return;
     }
-});
 
-router.get('/:id', async (req, res) => {
-    try {
+    const result = await user.save();
 
-        const result = await Customer.findById(req.params.id);
+    res.send(result)
+}));
 
-        res.send(result)
+router.put('/:id', asyncMiddleware(async (req, res) => {
+    const result = await Customer.findOneAndUpdate({
+        _id: req.params.id
+    }, {
+        ...req.body
+    }, {
+        new: true
+    });
 
-    } catch (e) {
+    res.send(result)
 
-        res.status(404).send(`Something went wrong`);
+}));
 
-        console.log(e.message)
+router.delete('/:id', asyncMiddleware(async (req, res) => {
+    const result = await Customer.findOneAndRemove({
+        _id: req.params.id
+    });
 
-    }
-});
-
-router.post('/', async (req, res) => {
-    try {
-
-        const customer = new Customer({
-            name: req.body.name,
-            isGold: req.body.isGold ? req.body.isGold : false,
-            phone: req.body.phone
-        });
-
-        const {
-            error
-        } = validate(customer);
-
-        if (error) {
-            res.status(400).send(error.details[0].message);
-            return;
-        }
-        ;
-
-        const result = await user.save();
-
-        res.send(result)
-
-    } catch (e) {
-
-        res.status(404).send(`Something went wrong`);
-
-        console.log(e.message)
-
-    }
-});
-
-router.put('/:id', async (req, res) => {
-    try {
-
-        const result = await Customer.findOneAndUpdate({
-            _id: req.params.id
-        }, {
-            ...req.body
-        }, {
-            new: true
-        });
-
-        res.send(result)
-
-    } catch (e) {
-
-        res.status(404).send(`Something went wrong`);
-
-        console.log(e.message)
-
-    }
-});
-
-router.delete('/:id', async (req, res) => {
-    try {
-
-        const result = await Customer.findOneAndRemove({
-            _id: req.params.id
-        });
-
-        res.send(result)
-
-    } catch (e) {
-
-        res.status(404).send(`Something went wrong`);
-
-        console.log(e.message)
-
-    }
-});
+    res.send(result)
+}));
 
 module.exports = router;

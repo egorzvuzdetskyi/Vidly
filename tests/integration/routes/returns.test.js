@@ -1,15 +1,15 @@
 const {
         Rental
-    } = require('../../models/rental'),
+    } = require('../../../models/rental'),
     mongoose = require('mongoose'),
     request = require('supertest'),
     {
         User
-    } = require('../../models/user'),
+    } = require('../../../models/user'),
     moment = require('moment'),
     {
         Movie
-    } = require('../../models/movies');
+    } = require('../../../models/movies');
 describe('/api/returns', () => {
     let server,
         rental,
@@ -30,7 +30,7 @@ describe('/api/returns', () => {
     };
 
     beforeEach(async () => {
-        server = require('../../index');
+        server = require('../../../index');
 
         customerId = new mongoose.Types.ObjectId();
         movieId = new mongoose.Types.ObjectId();
@@ -167,8 +167,6 @@ describe('/api/returns', () => {
     it('should return rental if input is valid', async function () {
 
         const res = await exe();
-
-        const rentalInDb = await Rental.findById(rental._id);
 
         expect(Object.keys(res.body))
             .toEqual(expect.arrayContaining([

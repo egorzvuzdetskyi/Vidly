@@ -1,19 +1,15 @@
 const {
         User,
-        validate
+        validateUser
     } = require('../models/user'),
-    mongoose = require('mongoose'),
     express = require('express'),
     router = express.Router(),
     _ = require('lodash'),
     bcrypt = require('bcrypt'),
-    jwt = require('jsonwebtoken'),
-    config = require('config'),
-    auth = require('../middleware/auth')
+    auth = require('../middleware/auth'),
+    validate = require('../middleware/validate')
 
-router.post('/', async (req, res) => {
-    const {error} = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+router.post('/', validate(validateUser), async (req, res) => {
 
     let user = await User.findOne({
         email: req.body.email
@@ -29,7 +25,9 @@ router.post('/', async (req, res) => {
 
     await user.save();
 
-    res.header('x-auth-header', token).send(token);
+    res.header('x-auth-header', token).send({
+        token
+    });
 });
 
 router.get('/me', auth, async (req, res) => {

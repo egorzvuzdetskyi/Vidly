@@ -38,11 +38,22 @@ const validateUser = (user) => {
         name: Joi.string().required().min(2).max(25),
         email: Joi.string().required().min(5).max(255).email(),
         password: Joi.string().required().min(5).max(255)
-    }
+    };
 
     return Joi.validate(user, userSchema)
 };
 
-exports.validate = validateUser;
+const validateUserBeforeLogin = (user) => {
+    const userSchema = {
+        email: Joi.string().required().min(5).max(255).email(),
+        password: Joi.string().required().min(5).max(255)
+    };
+
+    return Joi.validate(user, userSchema)
+};
+
+exports.validateUser = validateUser;
+
+exports.validateUserBeforeLogin = validateUserBeforeLogin;
 
 exports.User = User;

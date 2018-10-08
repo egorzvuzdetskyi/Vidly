@@ -1,17 +1,17 @@
 const request = require('supertest'),
     {
         Genre
-    } = require('../../models/genres'),
+    } = require('../../../models/genres'),
     {
         User
-    } = require('../../models/user'),
+    } = require('../../../models/user'),
     mongoose = require('mongoose');
 
 describe('api/genres', () => {
 
     beforeEach(() => {
 
-        server = require('../../index');
+        server = require('../../../index');
 
     });
 
